@@ -224,21 +224,21 @@
     <!-- MODALS -->
     <div id="adminModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-6 bg-pesantren-dark/95 backdrop-blur-md">
         <div class="absolute inset-0" onclick="toggleModal('adminModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-xs p-10 rounded-5xl border border-white/5 text-center">
-            <h3 class="text-[10px] font-black text-slate-500 mb-8 uppercase tracking-[0.3em]">Akses Pengelola</h3>
-            <input type="password" id="adminPin" maxlength="6" placeholder="••••••" class="w-full bg-pesantren-dark border-none rounded-3xl py-6 text-center text-4xl text-pesantren-green mb-8 outline-none focus:ring-2 focus:ring-pesantren-green">
-            <button onclick="handleLogin()" class="w-full bg-pesantren-green text-pesantren-dark font-black py-5 rounded-3xl uppercase tap-scale shadow-lg">Masuk</button>
-        </div>
-    </div>
-
+    <!-- EKSPOR DATA -->
     <div id="exportModal" class="fixed inset-0 z-[400] hidden flex items-end justify-center bg-pesantren-dark/90 backdrop-blur-sm">
         <div class="absolute inset-0" onclick="toggleModal('exportModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 text-left">
+        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 text-left max-h-[90vh] overflow-y-auto no-scrollbar">
             <h3 class="text-xs font-black text-white mb-2 uppercase tracking-widest">Ekspor Alumni</h3>
             <p id="export-count-preview" class="text-[10px] font-bold text-emerald-400 uppercase mb-6 tracking-widest">Terpilih: 0 Alumni</p>
             <div class="space-y-4 mb-8">
-                <select id="exportGender" onchange="updateExportPreview()" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm outline-none ring-1 ring-white/10"><option value="Semua">Semua Kelamin</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
-                <select id="exportDomicile" onchange="updateExportPreview()" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm outline-none ring-1 ring-white/10"><option value="Semua">Semua Wilayah</option></select>
+                <div>
+                    <label class="text-[9px] font-black text-slate-500 uppercase ml-2 mb-1 block">Filter Gender</label>
+                    <select id="exportGender" onchange="updateExportPreview()" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm outline-none ring-1 ring-white/10"><option value="Semua">Semua Kelamin</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-500 uppercase ml-2 mb-1 block">Filter Alamat / Domisili</label>
+                    <select id="exportDomicile" onchange="updateExportPreview()" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm outline-none ring-1 ring-white/10"><option value="Semua">Semua Alamat Wilayah</option></select>
+                </div>
             </div>
             <div class="flex flex-col gap-3">
                 <button onclick="downloadAlumniCSV()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-3xl uppercase tap-scale flex items-center justify-center gap-3"><i class="ph-bold ph-download-simple text-xl"></i> Unduh CSV</button>
@@ -247,95 +247,99 @@
         </div>
     </div>
 
+    <!-- FORM ALUMNI -->
     <div id="alumniFormModal" class="fixed inset-0 z-[300] hidden flex items-end justify-center bg-pesantren-dark/90 backdrop-blur-sm">
         <div class="absolute inset-0" onclick="toggleModal('alumniFormModal', false)"></div>
         <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 max-h-[90vh] overflow-y-auto no-scrollbar">
             <h3 class="text-xs font-black text-white mb-6 uppercase tracking-widest text-left">Profil Alumni</h3>
             <form id="alumniForm" class="space-y-4 text-left">
-                <input type="hidden" id="alumniId">
+                <input type="hidden" id="alumniRowIndex">
                 <input type="text" id="alumniNama" required placeholder="Nama Lengkap" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                 <div class="grid grid-cols-2 gap-4">
                     <input type="number" id="alumniAngkatan" required placeholder="Tahun Angkatan" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                     <select id="alumniGender" required class="w-full bg-pesantren-dark rounded-2xl px-4 text-white text-sm"><option value="" disabled selected>Gender</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
                 </div>
-                <input type="text" id="alumniDomisili" required placeholder="Domisili (Kab/Kota)" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
+                <input type="text" id="alumniDomisili" required placeholder="Alamat / Domisili" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                 <input type="text" id="alumniPekerjaan" placeholder="Pekerjaan / Instansi" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
-                <div class="flex gap-2">
+                <div class="flex gap-2 pt-2">
                     <button type="submit" class="flex-1 bg-emerald-600 text-white font-black py-4 rounded-3xl uppercase tap-scale">Simpan</button>
-                    <button type="button" id="btn-delete-alumni" onclick="deleteData('Alumni', 'alumniId')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
+                    <button type="button" id="btn-delete-alumni" onclick="deleteData('Alumni', 'alumniRowIndex')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- FORM LOKER -->
     <div id="lokerFormModal" class="fixed inset-0 z-[300] hidden flex items-end justify-center bg-pesantren-dark/90">
         <div class="absolute inset-0" onclick="toggleModal('lokerFormModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5">
+        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 max-h-[90vh] overflow-y-auto no-scrollbar">
             <h3 class="text-xs font-black text-white mb-6 uppercase tracking-widest text-left">Post Lowongan</h3>
             <form id="lokerForm" class="space-y-4 text-left">
-                <input type="hidden" id="lokerId">
+                <input type="hidden" id="lokerRowIndex">
                 <input type="text" id="lokerJudul" required placeholder="Judul Pekerjaan" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                 <input type="text" id="lokerInstansi" required placeholder="Nama Perusahaan" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
-                <textarea id="lokerDesc" required placeholder="Kualifikasi & Deskripsi..." class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm" rows="4"></textarea>
+                <textarea id="lokerDesc" required placeholder="Kualifikasi & Deskripsi..." class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm" rows="5"></textarea>
                 <input type="text" id="lokerKontak" required placeholder="WA Admin Loker (62...)" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
-                <div class="flex gap-2">
+                <div class="flex gap-2 pt-2">
                     <button type="submit" class="flex-1 bg-blue-600 text-white font-black py-4 rounded-3xl uppercase tap-scale">Simpan</button>
-                    <button type="button" id="btn-delete-loker" onclick="deleteData('Loker', 'lokerId')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
+                    <button type="button" id="btn-delete-loker" onclick="deleteData('Loker', 'lokerRowIndex')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- FORM SALDO -->
     <div id="saldoFormModal" class="fixed inset-0 z-[300] hidden flex items-end justify-center bg-pesantren-dark/90">
         <div class="absolute inset-0" onclick="toggleModal('saldoFormModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5">
+        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 max-h-[90vh] overflow-y-auto no-scrollbar">
             <h3 id="saldoFormTitle" class="text-xs font-black text-white mb-6 uppercase tracking-widest text-left">Input Kas</h3>
             <form id="saldoForm" class="space-y-4 text-left">
-                <input type="hidden" id="txId">
+                <input type="hidden" id="txRowIndex">
                 <div class="flex gap-2 p-1 bg-pesantren-dark rounded-2xl">
-                    <button type="button" onclick="setTxType('masuk')" id="tx-masuk-btn" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-emerald-500 text-emerald-950">Masuk</button>
-                    <button type="button" onclick="setTxType('keluar')" id="tx-keluar-btn" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-500">Keluar</button>
+                    <button type="button" onclick="setTxType('masuk')" id="tx-masuk-btn" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-emerald-500 text-emerald-950 tap-scale">Masuk</button>
+                    <button type="button" onclick="setTxType('keluar')" id="tx-keluar-btn" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-500 tap-scale">Keluar</button>
                 </div>
                 <input type="hidden" id="txType" value="masuk">
                 <input type="number" id="txNominal" required placeholder="Nominal Rp" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                 <input type="text" id="txKeterangan" required placeholder="Contoh: Infaq Bulanan" class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
                 <input type="date" id="txTanggal" required class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm">
-                <div class="flex gap-2">
+                <div class="flex gap-2 pt-2">
                     <button type="submit" class="flex-1 bg-amber-600 text-white font-black py-4 rounded-3xl uppercase tap-scale">Catat</button>
-                    <button type="button" id="btn-delete-tx" onclick="deleteData('Saldo', 'txId')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
+                    <button type="button" id="btn-delete-tx" onclick="deleteData('Saldo', 'txRowIndex')" class="hidden w-16 bg-rose-600/20 text-rose-500 rounded-3xl flex items-center justify-center tap-scale"><i class="ph ph-trash"></i></button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- SETTING BERANDA -->
     <div id="homeSettingsModal" class="fixed inset-0 z-[300] hidden flex items-end justify-center bg-pesantren-dark/90">
         <div class="absolute inset-0" onclick="toggleModal('homeSettingsModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 text-left">
+        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 max-h-[90vh] overflow-y-auto no-scrollbar text-left">
             <h3 class="text-xs font-black text-white mb-6 uppercase tracking-widest">Teks Beranda</h3>
-            <form id="homeForm" class="space-y-4 pb-10">
+            <form id="homeForm" class="space-y-4 pb-4">
                 <input type="text" id="setHomeTitle" placeholder="Judul..." class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm mb-3">
-                <textarea id="setHomeDesc" placeholder="Deskripsi..." class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm mb-6" rows="3"></textarea>
+                <textarea id="setHomeDesc" placeholder="Deskripsi..." class="w-full bg-pesantren-dark rounded-2xl p-4 text-white text-sm mb-6" rows="4"></textarea>
                 <button type="submit" class="w-full bg-pesantren-green text-pesantren-dark font-black py-4 rounded-3xl uppercase tap-scale">Update</button>
             </form>
         </div>
     </div>
 
+    <!-- SETTING BANK -->
     <div id="appSettingsModal" class="fixed inset-0 z-[300] hidden flex items-end justify-center bg-pesantren-dark/90">
         <div class="absolute inset-0" onclick="toggleModal('appSettingsModal', false)"></div>
-        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 text-left">
+        <div class="relative bg-slate-900 w-full max-w-md p-10 rounded-t-5xl border-t border-white/5 max-h-[90vh] overflow-y-auto no-scrollbar text-left">
             <h3 class="text-xs font-black text-white mb-8 uppercase tracking-widest">Rekening & Kontak</h3>
-            <form id="settingsForm" class="space-y-4 pb-10">
+            <form id="settingsForm" class="space-y-4 pb-4">
                 <input type="text" id="setWA" placeholder="WA Admin (62...)" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm">
-                <textarea id="setBank" placeholder="Detail Bank (Nama & No Rek)" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm" rows="3"></textarea>
+                <textarea id="setBank" placeholder="Detail Bank (Nama & No Rek)" class="w-full bg-pesantren-dark border-none rounded-2xl p-4 text-white text-sm" rows="4"></textarea>
                 <button type="submit" class="w-full bg-purple-600 text-white font-black py-4 rounded-3xl uppercase tap-scale">Simpan Perubahan</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT UTAMA (TANPA JSON HEADER/BODY) -->
     <script>
         // === PENTING: ISI URL WEB APP GOOGLE SCRIPT ANDA DI SINI ===
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwma0Da_Vh2cSuAP-nUTb93_7yGzPVCBCQsPkgy5rRaYA60XZIerAopFD-EetKkvyru/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwma0Da_Vh2cSuAP-nUTb93_7yGzPVCBCQsPkgy5rRaYA60XZIerAopFD-EetKkvyru/exec";
 
         let localAlumni = [];
         let localLoker = [];
@@ -357,18 +361,19 @@
         };
         const hideLoading = () => document.getElementById('loading-overlay').style.display = 'none';
 
-        // --- FETCH DATA DARI GOOGLE SHEETS (TEXT/CSV STYLE) ---
+        // --- FETCH DATA (MENCEGAH CACHE DGN PARAMETER WAKTU) ---
         const fetchAllData = async () => {
             try {
                 showLoading("Menarik Data Sheets...");
-                const response = await fetch(SCRIPT_URL, { redirect: 'follow' });
+                // Tambahkan parameter ?t=... agar browser tidak cache hasil lama
+                const url = SCRIPT_URL + "?t=" + new Date().getTime();
+                const response = await fetch(url, { redirect: 'follow' });
                 const textData = await response.text();
                 
                 if(textData.includes("<html") || textData.includes("<body")) {
-                    throw new Error("Akses Ditolak. Pastikan pengaturan Google Script Anda di-set ke 'Who has access: Anyone'.");
+                    throw new Error("Akses Ditolak. Pastikan URL benar dan 'Who has access' pada Google Script diatur ke 'Anyone'.");
                 }
 
-                // Mengolah Plain Text (BUKAN JSON)
                 localAlumni = []; localLoker = []; localSaldo = [];
 
                 const tables = textData.split("===TABLE:");
@@ -384,9 +389,9 @@
                     for(let i = 2; i < lines.length; i++) {
                         if(!lines[i].trim()) continue;
                         const vals = lines[i].split("|");
-                        let obj = {};
-                        headers.forEach((h, index) => { obj[h] = vals[index] || ""; });
-                        if(obj.id) rows.push(obj);
+                        let obj = { _rowIndex: vals[0] }; 
+                        headers.forEach((h, index) => { obj[h] = vals[index + 1] || ""; });
+                        rows.push(obj);
                     }
 
                     if(tableName === 'Alumni') localAlumni = rows;
@@ -406,11 +411,10 @@
             }
         };
 
-        // --- POST DATA KE GOOGLE SHEETS (MENGGUNAKAN FORM DATA) ---
+        // --- POST DATA KE GOOGLE SHEETS ---
         const postDataToSheet = async (sheetName, payload, action = 'save', formModalId) => {
             showLoading("Menyimpan Data...");
             try {
-                // Menggunakan URLSearchParams agar tidak menggunakan JSON
                 const params = new URLSearchParams();
                 params.append('action', action);
                 params.append('targetSheet', sheetName);
@@ -420,7 +424,7 @@
 
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: params // Browser otomatis set header application/x-www-form-urlencoded
+                    body: params
                 });
                 
                 const resultText = await response.text();
@@ -437,15 +441,15 @@
             }
         };
 
-        window.deleteData = async (sheetName, idInputId) => {
-            const id = document.getElementById(idInputId).value;
-            if(!id) return;
+        window.deleteData = async (sheetName, rowIndexInputId) => {
+            const rowIndex = document.getElementById(rowIndexInputId).value;
+            if(!rowIndex) return;
             if(!confirm(`Anda yakin ingin menghapus data ini dari tabel ${sheetName}?`)) return;
-            await postDataToSheet(sheetName, { id: id }, 'delete', `${sheetName.toLowerCase()}FormModal`);
+            
+            await postDataToSheet(sheetName, { _rowIndex: rowIndex }, 'delete', `${sheetName.toLowerCase()}FormModal`);
         };
 
-
-        // --- UI NAVIGATION ---
+        // --- NAVIGASI UI ---
         window.switchNav = (target) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const targetPage = document.getElementById(`page-${target}`);
@@ -507,7 +511,7 @@
             renderSaldo();
         };
 
-        // --- RENDER DATA ---
+        // --- FUNGSI RENDER TAMPILAN ---
         window.renderAlumni = () => {
             const list = document.getElementById('alumni-list');
             const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
@@ -525,7 +529,7 @@
 
             filtered.forEach(a => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-900 p-4 rounded-3xl border border-white/5 flex items-center justify-between tap-scale";
+                card.className = "bg-slate-900 p-4 rounded-3xl border border-white/5 flex items-center justify-between tap-scale cursor-pointer";
                 card.onclick = () => { if(isAdmin) openAlumniForm(a); };
                 const angkatanStr = (a.angkatan||'??').toString();
                 const nama = a.namalengkap || a.nama || 'Tanpa Nama';
@@ -561,16 +565,25 @@
                 const kontak = (l.kontakwa || l.kontak || '').toString().replace(/\D/g,'');
                 
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-3" ${isAdmin ? 'onclick="openLokerForm('+JSON.stringify(l).replace(/"/g, '&quot;')+')"' : ''}>
+                    <div class="flex justify-between items-start mb-3 cursor-pointer loker-click-area">
                         <h4 class="text-xs font-black text-white uppercase">${judul}</h4>
                         <span class="text-[7px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full uppercase font-black">${l.instansi || '-'}</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 leading-relaxed mb-4 whitespace-pre-wrap" ${isAdmin ? 'onclick="openLokerForm('+JSON.stringify(l).replace(/"/g, '&quot;')+')"' : ''}>${l.deskripsi || l.desc || ''}</p>
-                    <div class="flex gap-2">
-                        <a href="https://wa.me/${kontak}" class="flex-1 text-center py-3 bg-blue-600 rounded-2xl text-[9px] font-black uppercase text-white shadow-lg">Lamar Sekarang</a>
-                        ${isAdmin ? `<button onclick="openLokerForm(${JSON.stringify(l).replace(/"/g, '&quot;')})" class="w-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl text-emerald-500"><i class="ph ph-pencil"></i></button>` : ''}
+                    <p class="text-[10px] text-slate-400 leading-relaxed mb-4 whitespace-pre-wrap cursor-pointer loker-click-area">${l.deskripsi || l.desc || ''}</p>
+                    <div class="flex gap-2 relative z-10">
+                        <a href="https://wa.me/${kontak}" target="_blank" class="flex-1 text-center py-3 bg-blue-600 rounded-2xl text-[9px] font-black uppercase text-white shadow-lg tap-scale">Lamar Sekarang</a>
+                        ${isAdmin ? `<button class="w-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl text-emerald-500 tap-scale loker-edit-btn"><i class="ph ph-pencil"></i></button>` : ''}
                     </div>
                 `;
+                
+                // Binding event listener dengan aman tanpa inline HTML string
+                if (isAdmin) {
+                    const clickAreas = card.querySelectorAll('.loker-click-area');
+                    clickAreas.forEach(el => el.onclick = () => openLokerForm(l));
+                    const editBtn = card.querySelector('.loker-edit-btn');
+                    if(editBtn) editBtn.onclick = () => openLokerForm(l);
+                }
+
                 list.appendChild(card);
             });
         };
@@ -588,20 +601,32 @@
                 return;
             }
 
-            localSaldo.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal)).forEach(s => {
+            localSaldo.sort((a,b) => {
+                const dateA = a.tanggal ? new Date(a.tanggal) : new Date(0);
+                const dateB = b.tanggal ? new Date(b.tanggal) : new Date(0);
+                return dateB - dateA;
+            }).forEach(s => {
                 const nom = Number(s.nominal) || 0;
                 const tipe = (s.tipe || 'masuk').toLowerCase();
                 if(tipe === 'masuk') total += nom; else total -= nom;
                 
                 const card = document.createElement('div');
-                card.className = "flex justify-between items-center p-4 bg-slate-900/50 rounded-2xl border border-white/5 tap-scale";
+                card.className = "flex justify-between items-center p-4 bg-slate-900/50 rounded-2xl border border-white/5 tap-scale cursor-pointer";
                 card.onclick = () => { if(isAdmin) openSaldoForm(s); };
+                
+                let dateDisplay = '???';
+                if(s.tanggal) {
+                    const d = new Date(s.tanggal);
+                    if(!isNaN(d)) dateDisplay = d.toLocaleDateString('id-ID');
+                    else dateDisplay = s.tanggal;
+                }
+
                 card.innerHTML = `
                     <div class="flex items-center gap-3 text-left">
                         <i class="ph ${tipe === 'masuk' ? 'ph-arrow-down-left text-emerald-500' : 'ph-arrow-up-right text-rose-500'} text-xl"></i>
                         <div>
                             <p class="text-[10px] font-black text-white uppercase">${s.keterangan || 'Mutasi'}</p>
-                            <p class="text-[8px] text-slate-600">${s.tanggal || '???'}</p>
+                            <p class="text-[8px] text-slate-600">${dateDisplay}</p>
                         </div>
                     </div>
                     <span class="text-[10px] font-black ${tipe === 'masuk' ? 'text-emerald-400' : 'text-rose-400'}">${tipe === 'masuk' ? '+' : '-'}${nom.toLocaleString('id-ID')}</span>
@@ -640,15 +665,19 @@
             if(btnWaAdmin) btnWaAdmin.href = `https://wa.me/${(localSettings.wa||'').replace(/\D/g,'')}`;
         };
 
-        // --- EKSPOR DATA ---
+        // --- FUNGSI EKSPOR ---
         window.openExportModal = () => {
+            updateExportFilters();
+            updateExportPreview();
+            toggleModal('exportModal', true);
+        };
+
+        const updateExportFilters = () => {
             const select = document.getElementById('exportDomicile');
+            if(!select) return;
             const domiciles = [...new Set(localAlumni.map(a => a.domisili))].filter(Boolean).sort();
             select.innerHTML = '<option value="Semua">Semua Wilayah</option>';
             domiciles.forEach(d => { select.innerHTML += `<option value="${d}">${d}</option>`; });
-            
-            updateExportPreview();
-            toggleModal('exportModal', true);
         };
 
         window.updateExportPreview = () => {
@@ -657,7 +686,8 @@
             let filtered = localAlumni;
             if (gender !== 'Semua') filtered = filtered.filter(a => a.gender === gender);
             if (domicile !== 'Semua') filtered = filtered.filter(a => a.domisili === domicile);
-            document.getElementById('export-count-preview').innerText = `Terpilih: ${filtered.length} Alumni`;
+            const countEl = document.getElementById('export-count-preview');
+            if (countEl) countEl.innerText = `Terpilih: ${filtered.length} Alumni`;
         };
 
         window.downloadAlumniCSV = () => {
@@ -667,11 +697,14 @@
             if (gender !== 'Semua') filtered = filtered.filter(a => a.gender === gender);
             if (domicile !== 'Semua') filtered = filtered.filter(a => a.domisili === domicile);
             
-            if(filtered.length === 0) return alert("Tidak ada data untuk diunduh.");
+            if(filtered.length === 0) {
+                alert("Tidak ada data yang sesuai filter untuk diunduh.");
+                return;
+            }
             
             const escape = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
             const rows = [
-                ["Nama Lengkap", "Gender", "Angkatan", "Domisili", "Pekerjaan"],
+                ["Nama Lengkap", "Gender", "Angkatan", "Alamat / Domisili", "Pekerjaan"],
                 ...filtered.map(a => [escape(a.namalengkap||a.nama), escape(a.gender), escape(a.angkatan), escape(a.domisili), escape(a.pekerjaan)])
             ];
             const csvContent = "\uFEFF" + rows.map(e => e.join(",")).join("\n");
@@ -687,10 +720,10 @@
             toggleModal('exportModal', false);
         };
 
-        // --- MANAJEMEN FORM ---
+        // --- MANAJEMEN FORM (POPULATING) ---
         window.openAlumniForm = (data = null) => {
             document.getElementById('alumniForm').reset();
-            document.getElementById('alumniId').value = data?.id || '';
+            document.getElementById('alumniRowIndex').value = data?._rowIndex || '';
             document.getElementById('btn-delete-alumni').classList.toggle('hidden', !data);
             if(data) {
                 document.getElementById('alumniNama').value = data.namalengkap || data.nama || '';
@@ -704,7 +737,7 @@
 
         window.openLokerForm = (data = null) => {
             document.getElementById('lokerForm').reset();
-            document.getElementById('lokerId').value = data?.id || '';
+            document.getElementById('lokerRowIndex').value = data?._rowIndex || '';
             document.getElementById('btn-delete-loker').classList.toggle('hidden', !data);
             if(data) {
                 document.getElementById('lokerJudul').value = data.judulpekerjaan || data.judul || '';
@@ -717,7 +750,7 @@
 
         window.openSaldoForm = (data = null) => {
             document.getElementById('saldoForm').reset();
-            document.getElementById('txId').value = data?.id || '';
+            document.getElementById('txRowIndex').value = data?._rowIndex || '';
             document.getElementById('btn-delete-tx').classList.toggle('hidden', !data);
             document.getElementById('saldoFormTitle').innerText = data ? 'Edit Transaksi' : 'Input Kas';
             if(data) {
@@ -728,8 +761,12 @@
                 let dateStr = '';
                 if(data.tanggal) {
                     const d = new Date(data.tanggal);
-                    if(!isNaN(d)) dateStr = d.toISOString().split('T')[0];
-                    else dateStr = data.tanggal.replace(/\//g, '-');
+                    if(!isNaN(d)) {
+                        const offset = d.getTimezoneOffset() * 60000;
+                        dateStr = new Date(d.getTime() - offset).toISOString().split('T')[0];
+                    } else {
+                        dateStr = data.tanggal.replace(/\//g, '-');
+                    }
                 }
                 document.getElementById('txTanggal').value = dateStr;
             } else {
@@ -762,8 +799,8 @@
         document.getElementById('alumniForm').onsubmit = async (e) => {
             e.preventDefault();
             const payload = {
-                id: document.getElementById('alumniId').value || crypto.randomUUID(),
-                namalengkap: document.getElementById('alumniNama').value,
+                _rowIndex: document.getElementById('alumniRowIndex').value,
+                nama: document.getElementById('alumniNama').value,
                 angkatan: document.getElementById('alumniAngkatan').value,
                 gender: document.getElementById('alumniGender').value,
                 domisili: document.getElementById('alumniDomisili').value,
@@ -775,11 +812,11 @@
         document.getElementById('lokerForm').onsubmit = async (e) => {
             e.preventDefault();
             const payload = {
-                id: document.getElementById('lokerId').value || crypto.randomUUID(),
-                judulpekerjaan: document.getElementById('lokerJudul').value,
+                _rowIndex: document.getElementById('lokerRowIndex').value,
+                judul: document.getElementById('lokerJudul').value,
                 instansi: document.getElementById('lokerInstansi').value,
                 deskripsi: document.getElementById('lokerDesc').value,
-                kontakwa: document.getElementById('lokerKontak').value,
+                kontak: document.getElementById('lokerKontak').value,
             };
             await postDataToSheet('Loker', payload, 'save', 'lokerFormModal');
         };
@@ -787,7 +824,7 @@
         document.getElementById('saldoForm').onsubmit = async (e) => {
             e.preventDefault();
             const payload = {
-                id: document.getElementById('txId').value || crypto.randomUUID(),
+                _rowIndex: document.getElementById('txRowIndex').value,
                 tipe: document.getElementById('txType').value,
                 nominal: document.getElementById('txNominal').value,
                 keterangan: document.getElementById('txKeterangan').value,
@@ -816,6 +853,7 @@
             alert("Kontak & Bank diperbarui!");
         };
 
+        // Mulai jalankan ketika halaman dimuat
         window.onload = () => {
             updateSettingsUI();
             fetchAllData();
